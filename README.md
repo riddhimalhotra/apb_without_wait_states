@@ -1,134 +1,121 @@
-# apb_without_wait_states
+🚀 **APB Master-Slave Interface Project**
 
+A Verilog-based APB Master-Slave interface demonstrating memory-mapped read/write operations with a simple FSM-based APB Master and a memory-based APB Slave.
 
-**Project Overview**
+🌟 **Project Overview**
+This project implements a simple Advanced Peripheral Bus (APB) system:
 
-This project implements a simple Advanced Peripheral Bus (APB) Master-Slave interface using Verilog. The design consists of:
+APB Master (apb_m) – Generates control signals, performs read/write operations.
 
-**APB Master (apb_m)** – generates control signals, handles read/write operations.
+APB Slave (apb_s) – Stores data in memory, responds to master requests.
 
-**APB Slave (apb_s)** – responds to master requests, stores data in a small memory.
+Top Module (top) – Connects Master and Slave for simulation or synthesis.
 
-**Top Module (top)** – connects master and slave to demonstrate a working APB communication.
+✅ Fully synchronous
+✅ Active-low reset support
+✅ APB3-like interface for learning and testing
 
-The design is fully synchronous with an active-low reset (rstn) and operates on a single clock (clk).
+📦 **Modules**
+1️⃣ **APB Master (apb_m)**
 
-Modules
-1. **APB Master (apb_m)**
-
-States: idle, setup, enable
+States: idle → setup → enable
 
 Inputs:
 
-pclk – APB clock
-
-presetn – Active-low reset
-
-addrin[3:0] – Address to access in the slave
-
-datain[7:0] – Data to write to the slave
-
-wr – Write enable (1 = write, 0 = read)
-
-newd – Indicates a new transaction request
-
-prdata[7:0] – Data read from slave
-
-pready – Slave ready signal
+Signal	Description
+pclk	APB clock
+presetn	Active-low reset
+addrin[3:0]	Address to access
+datain[7:0]	Data to write
+wr	Write enable (1=write, 0=read)
+newd	Indicates a new transaction request
+prdata[7:0]	Data from slave
+pready	Slave ready
 
 Outputs:
 
-psel – Slave select
-
-penable – Enable signal for APB transaction
-
-paddr[3:0] – Address sent to slave
-
-pwdata[7:0] – Write data to slave
-
-pwrite – Write control signal
-
-dataout[7:0] – Data read from slave
+Signal	Description
+psel	Slave select
+penable	Enable for APB transaction
+paddr[3:0]	Address to slave
+pwdata[7:0]	Write data to slave
+pwrite	Write control signal
+dataout[7:0]	Data read from slave
 
 Functionality:
 
-Waits in idle until newd is asserted.
+Waits for newd=1 in idle state
 
-Moves to setup state to prepare address/data.
+Prepares transaction in setup state
 
-Moves to enable to complete the APB transaction.
+Completes read/write in enable state
 
-Handles both read and write operations.
+2️⃣ **APB Slave (apb_s)**
 
-
-2.**APB Slave (apb_s)**
-
-
-States: idle, write, read
+States: idle → write → read
 
 Inputs:
 
-pclk, presetn – Clock and reset
-
-paddr[3:0] – Address from master
-
-psel – Slave select
-
-penable – APB enable
-
-pwdata[7:0] – Data from master
-
-pwrite – Write enable
+Signal	Description
+pclk, presetn	Clock and reset
+paddr[3:0]	Address from master
+psel	Slave select
+penable	APB enable
+pwdata[7:0]	Data from master
+pwrite	Write enable
 
 Outputs:
 
-prdata[7:0] – Data read by master
-
-pready – Indicates slave is ready
+Signal	Description
+prdata[7:0]	Data read by master
+pready	Slave ready
 
 Functionality:
 
-Stores data in an 8-bit memory array of 16 locations.
+16 × 8-bit memory storage
 
-Handles write and read requests based on APB protocol.
+Handles read/write transactions per APB protocol
 
-Signals ready when the transaction is completed.
+Signals ready when transaction completes
 
-3. **Top Module (top)**
+3️⃣ **Top Module (top)**
 
-Purpose: Connects master and slave modules for simulation or synthesis.
+Purpose: Connects Master and Slave for simulation.
 
 Inputs:
 
-clk – System clock
-
-rstn – Active-low reset
-
-wr – Write enable
-
-newd – New data request
-
-ain[3:0] – Address input
-
-din[7:0] – Data input
+Signal	Description
+clk	System clock
+rstn	Active-low reset
+wr	Write enable
+newd	New data request
+ain[3:0]	Address input
+din[7:0]	Data input
 
 Output:
 
-dout[7:0] – Data output from slave (read operation)
+Signal	Description
+dout[7:0]	Data read from slave
 
-Connections:
-
-Master outputs (psel, penable, paddr, pwdata, pwrite) are connected to slave inputs.
-
-Slave outputs (prdata, pready) are fed back to master.
+Connections: Master outputs feed slave inputs; slave outputs feed master inputs.
 
 
-**Design Features:**
+🛠 **Simulation / Usage**
 
-Implements APB3-like protocol for easy learning and testing.
+Instantiate top in a testbench.
 
-Fully synchronous with reset handling.
+Apply clk, rstn, wr, newd, ain, din.
 
-Modular design for master/slave separation.
+Observe dout for read operations.
 
-Simple memory-mapped read/write transactions.
+Use waveform viewers like GTKWave or ModelSim for debugging.
+
+🎯 **Features**
+
+Simple APB protocol simulation
+
+Modular design: Master and Slave separate
+
+Memory-mapped read/write support
+
+Fully synchronous design with reset
